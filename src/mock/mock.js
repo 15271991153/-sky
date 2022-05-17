@@ -94,14 +94,19 @@ var _book = []
 for (let i = 0; i < 20; i++) {
     _book.push(Mock.mock({
         bookid:'@id',
-        bookname:'@title',
+        bookname:'@ctitle(3, 5)',
         athour:'@cname',
         price:'@integer(1,100)',
-        'booktype|1':['益智启蒙','儿童文学','亲子','育儿','儿童绘本','随笔','传记','诗歌','名著','古籍']
+        'booktype|1':['益智启蒙','儿童文学','亲子','育儿','儿童绘本','随笔','传记','诗歌','名著','古籍'],
+        press:'@ctitle(3, 5)'+'出版社',
+        presstime:"@date()",
+        'invquantity|1-100':100,
+        'broquantity|1-100':100
     }))
 }
 //获取图书列表
 function getBook(){
+    //localStorage.setItem('booklist',JSON.stringify(_book))
    if (!localStorage.getItem('booklist')) {
         localStorage.setItem('booklist',JSON.stringify(_book))
    }
@@ -168,3 +173,118 @@ Mock.mock('/book/getid','post',getBookId)
 Mock.mock('/book/delete','post',deleteBook)
 Mock.mock('/book/add','post',addBook)
 Mock.mock('/book/update','post',updateBook)
+
+//借阅记录
+//图书相关
+var _brolog = []
+for (let i = 0; i < 20; i++) {
+    _brolog.push(Mock.mock({
+        brologid:'@id',//借阅单id
+        bookid:'@id',
+        bookname:'@ctitle(3, 5)',
+        readerid:'@id',
+        readername:'@cname',
+        begintime:'@datetime("yyyy-MM-dd")',
+        endtime:'@datetime("yyyy-MM-dd")',
+        "status|1":['0','1','-1']//0已完成，1借书中，-1已逾期
+    }))
+}
+//获取借阅记录
+function getBrolog(){
+    //localStorage.setItem('brologlist',JSON.stringify(_brolog))
+    if (!localStorage.getItem('brologlist')) {
+         localStorage.setItem('brologlist',JSON.stringify(_brolog))
+    }
+    var brologlist = JSON.parse(localStorage.getItem('brologlist'))
+    //console.log(readerlist);
+    return {code:200,brologlist:brologlist}
+}
+//根据id获取借阅记录
+function getBrologId(options){
+    //拉取图书list
+    var brologlist = JSON.parse(localStorage.getItem('brologlist'))
+    for(let index in brologlist){
+        if(brologlist[index].brologid === options.body){
+            var brolog = brologlist[index]
+            return {code:200,brolog:brolog}
+        }
+    }
+}
+//增加借阅记录
+function addBrolog(options){
+    //brologlist
+    var brologlist = JSON.parse(localStorage.getItem('brologlist'))
+    //获取传入book
+    var brolog = JSON.parse(options.body)
+    //插入
+    brologlist.unshift(brolog) 
+    //更新
+    localStorage.setItem('brologlist', JSON.stringify(brologlist))
+    return {code:200,message:'借阅记录添加成功'}
+}
+//删除图书-根据id删除
+function deleteBrolog(options){
+    //拉取图书list
+    var brologlist = JSON.parse(localStorage.getItem('brologlist'))
+    for( let index in brologlist ) {
+        if (brologlist[index].brologid === options.body) {
+            brologlist.splice(index,1)
+          //存储readerlist
+          localStorage.setItem('brologlist', JSON.stringify(brologlist))
+        }
+    }
+    return {code:200,message:'删除成功'}
+}
+//更新图书信息
+function updateBrolog(options){
+    //拉取读者list
+    var brologlist = JSON.parse(localStorage.getItem('brologlist'))
+    //获取传入的读者信息
+    var brolog= JSON.parse(options.body)
+    //遍历 更新
+    for(let index in brologlist){
+        //对比id更新信息
+        if(brologlist[index].brologid === brolog.brologid){
+            brologlist[index] = brolog
+        }
+    }
+    //存储
+    localStorage.setItem('brologlist', JSON.stringify(brologlist))
+    return {code:200,message:'信息更新成功'}
+}
+//设置借阅记录url
+Mock.mock('/brolog/get','get',getBrolog)
+Mock.mock('/brolog/getid','post',getBrologId)
+Mock.mock('/brolog/delete','post',deleteBrolog)
+Mock.mock('/brolog/add','post',addBrolog)
+Mock.mock('/brolog/update','post',updateBrolog)
+//新书订购相关
+var _orderbook= []
+for (let i = 0; i < 20; i++) {
+    _orderbook.push(Mock.mock({
+        orderbookid:'@id',//借阅单id
+        bookid:'@id',
+        bookname:'@ctitle(3, 5)',
+        author:'@cname',
+        'orderquantily|1-100':100,
+        'price|1-100':100,
+        'warehouse|1':['1','-1'],//1已验收，-1未验收
+        readerid:'@id',
+        readername:'@cname',
+        warehousetime:'@datetime("yyyy-MM-dd")',
+        'invquantity|1-100':100,
+        "operator|1":['admin','管理员']//
+    }))
+}
+//获取订购单
+function getOrderBook(){
+    //localStorage.setItem('orderbooklist',JSON.stringify(_orderbook))
+    if (!localStorage.getItem('orderbooklist')) {
+         localStorage.setItem('orderbooklist',JSON.stringify(_orderbook))
+    }
+    var orderbooklist = JSON.parse(localStorage.getItem('orderbooklist'))
+    //console.log(readerlist);
+    return {code:200,orderbooklist:orderbooklist}
+}
+//设置订购单url
+Mock.mock('/orderbook/get','get',getOrderBook)

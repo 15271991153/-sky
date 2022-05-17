@@ -31,22 +31,26 @@
                 </a>
                 <a-menu slot="overlay">
                 <a-menu-item>
-                    <a href="javascript:;">1st menu item</a>
+                    <a href="javascript:;"><a-icon type="user" />个人中心</a>
                 </a-menu-item>
                 <a-menu-item>
-                    <a href="javascript:;">2nd menu item</a>
-                </a-menu-item>
-                <a-menu-item>
-                    <a href="javascript:;">3rd menu item</a>
+                    <a href="javascript:;"><a-icon type="login" />退出登录</a>
                 </a-menu-item>
                 </a-menu>
             </a-dropdown>
         </a-layout-header>
-        <a-layout-content
-            :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
-        >
-          <slot></slot>
-        </a-layout-content>
+        <a-layout style="padding: 0 24px 24px">
+            <a-breadcrumb style="margin: 16px 0px;display:flex;">
+                <a-breadcrumb-item 
+                v-for="(item,index) in breadMenu"
+                :key="index">{{item.breadName}}</a-breadcrumb-item>
+            </a-breadcrumb>
+            <a-layout-content
+                :style="{padding: '0px',background: 'rgba(255, 255, 255, 0.2)',minHeight: '280px' }"
+            >
+            <slot></slot>
+            </a-layout-content>
+        </a-layout>
         </a-layout>
     </a-layout>
 </template>
@@ -56,9 +60,11 @@ export default {
         return {
           collapsed: false,
           navMenu:[],//导航栏数据
+          breadMenu:[],//面包屑数据
         };
   },
   created () {
+      this.breadMenu=[{breadName:'基础数据'},{breadName:'读者信息管理'}]
       this.navMenu = [
           {
               name:'基础数据',
@@ -89,21 +95,10 @@ export default {
               ename:'borrowbook',
               children:[
                   {
-                      name:'图书借阅',
+                      name:'借阅记录',
                       icon:'read',
-                      ename:'borrowbook',
-                      url:'/borrowbook'
-                  },
-                  {
-                      name:'图书归还',
-                      icon:'read',
-                      ename:'returnbook',
-                      url:'/returnbook'
-                  },{
-                      name:'图书查询',
-                      icon:'read',
-                      ename:'querybook',
-                      url:'/querybook'
+                      ename:'brolog',
+                      url:'/brolog'
                   }
               ]
           },{
@@ -149,6 +144,15 @@ export default {
         if(item.key!==this.$route.path){
             this.$router.push(item.key)
         }
+       this.navMenu.map(items=>{
+            var data=items.children.filter(item1=>item1.url===item.key)
+            //console.log(data);
+            if(data.length===1){
+                this.breadMenu =[]
+                this.breadMenu.push({breadName:items.name})
+                this.breadMenu.push({breadName:data[0].name})
+            }
+        })
       }
   }
 }
@@ -167,7 +171,9 @@ export default {
   cursor: pointer;
   transition: color 0.3s;
 }
-
+.ant-layout ::deep(.ant-layout-content){
+    padding: 0px !important;
+}
 #components-layout-demo-custom-trigger .trigger:hover {
   color: #1890ff;
 }

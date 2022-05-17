@@ -1,12 +1,57 @@
 <template>
-    <div>
-        <ListView
-        :columns="readerHeader"
-        :data="readerList"
-        @add ="addReader"
-        @deleteData ="deleteReader"
-        @updataData ="updataReader"
-        ></ListView>
+    <div class="content">
+        <a-card style="margin-bottom:24px">
+             <a-row>
+                 <a-col :span="8">
+                    <a-form-model-item label="借书证号：" :labelCol="{span: 5}" :wrapper-col="{ span: 16 }">
+                       <a-input v-model="searchkey" />
+                    </a-form-model-item>
+                 </a-col>
+                 <a-col :span="8"></a-col>
+                 <a-col :span="8">
+                     <a-form-model-item :wrapper-col="{ span: 24, offset: 6 }">
+                        <a-button style="margin-right: 10px;">
+                            重置
+                        </a-button>
+                        <a-button type="primary" @click="onSubmit">
+                            查询
+                        </a-button>
+                    </a-form-model-item>
+                 </a-col>
+             </a-row>
+        </a-card>
+        <div class="content-table">
+            <a-page-header
+                title="读者信息"
+            >
+              <template slot="extra">
+                   <a-space class="icons-list" size="middle">
+                        <a-button key="1" type="primary" @click="addReader">
+                        新增
+                        </a-button>
+                        <a-tooltip>
+                            <template slot="title">
+                            刷新
+                            </template>
+                            <a-icon type="reload" @click="refreach"/>
+                        </a-tooltip>
+                        <a-tooltip>
+                            <template slot="title">
+                              列设置
+                            </template>
+                            <a-icon type="setting" />
+                        </a-tooltip>
+                   </a-space>
+               </template>
+            </a-page-header>
+            <ListView
+            :columns="readerHeader"
+            :data="readerList"
+            @add ="addReader"
+            @deleteData ="deleteReader"
+            @updataData ="updataReader"
+            ></ListView>
+        </div>
         <readerDesign  ref="readerDesign" @saveReader='saveReader' @close='close' :readerData='readerData' :action="action"></readerDesign>
     </div>
 </template>
@@ -28,6 +73,7 @@ export default {
             readerData:{},
             action:'new',
             index:0,//当前操作数据得索引
+            searchkey:'',//检索关键字
         }
     },
     created () {
@@ -134,7 +180,26 @@ export default {
                     }
                 })
             }
+        },
+        onSubmit(){
+
+        },
+        refreach(){
+            this.initData()
         }
     }
 }
 </script>
+<style scoped>
+.content{
+    width: 100%;
+    height: 100%;
+}
+.content-table{
+    padding: 12px;
+    background-color: #fff !important;
+}
+.icons-list >>> .anticon :hover{
+  color: #40a9ff;
+}
+</style>

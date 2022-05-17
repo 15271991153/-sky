@@ -18,6 +18,12 @@ const pubm={
                     title: message,
                 });
             }
+        },
+        //日期转换成时间戳
+        getTime(data){
+            var data1 = new Date(data) 
+            var times = data1.getTime()
+            return times
         }
     }
 }

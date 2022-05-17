@@ -8,6 +8,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
+    redirect: '/reader',
     component: Home
   },
   {
@@ -25,6 +26,16 @@ const routes = [
     path:'/book',
     name:'Book',
     component:() => import(/* webpackChunkName: "about" */'../views/Book/index.vue')
+  },
+  {
+    path:'/brolog',
+    name:'Brolog',
+    component:() => import(/* webpackChunkName: "about" */'../views/brolog/index.vue')
+  },
+  {
+    path:'/orderbook',
+    name:'orderboook',
+    component:() => import(/* webpackChunkName: "about" */'../views/OrderBook/index.vue')
   }
 ]
 
